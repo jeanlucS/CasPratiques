@@ -1,0 +1,28 @@
+#   Empêche la visualisation de l'arborescence, n'a rien à voir avec le masquage du « index.php ».
+Options -Indexes
+
+#   Active le module de réécriture d'URL.
+RewriteEngine on
+
+#
+#   Fixe les règles de réécriture d'URL. Ici, nous utilisons une liste blanche.
+#
+
+#   Toutes les URL qui ne correspondent pas à ces masques sont réécrites.
+RewriteCond $1 !^(index\.php|assets/|robots\.txt|invoices/|uploads/|sogenactif/|candidates/|downloads/)
+
+#   Toutes les autres URL vont être redirigées vers le fichier index.php.
+RewriteRule ^(.*)$ index.php/$1 [L]
+
+php_flag file_uploads On
+php_value memory_limit 6148M
+php_value post_max_size 256M
+php_value upload_max_filesize 256M
+php_value max_execution_time 0 
+php_value max_input_time -1
+php_value max_input_vars 100000
+php_value suhosin.post.max_vars 100000
+php_value suhosin.request.max_vars 100000
+
+#   Autres paramètres nécessaires.
+php_value date.timezone "Africa/Nairobi"
