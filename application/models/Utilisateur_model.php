@@ -61,7 +61,7 @@ class Utilisateur_model extends CI_Model {
         $this->db->where('email',$email);
         $this->db->update('utilisateur',$data);
       }
-    public function delete_avis($id)
+    public function delete_user($id)
       {
         $this->db->where('utilisateur_id',$id);
         $this->db->delete('utilisateur');
