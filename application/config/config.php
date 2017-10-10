@@ -29,8 +29,6 @@ $baseUrl .= "://" . $_SERVER['HTTP_HOST'];
 $baseUrl .= str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['SCRIPT_NAME']);
 $config['base_url']     = $baseUrl;
 
-//$config['base_url'] = 'http://127.0.0.1/taxi/';
-
 /*
 |--------------------------------------------------------------------------
 | Index File
