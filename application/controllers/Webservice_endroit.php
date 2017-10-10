@@ -11,12 +11,15 @@ class webservice_endroit extends REST_Controller
         $this->load->model('Endroit_model','endroit');
         $this->output->set_content_type('application/json');
     }
-    public function isertEndroit_post(){
-
+    /*Web service insertion endroit
+      Method : POST
+      Params : ville,image,description
+      URL : IP/Webservice_avis/isertAvis
+     */ 
+    public function insertEndroit_post(){
         $ville = $this->post('ville');
         $image = $this->post('image');
         $description = $this->post('description');
-
         $donnees = array();
         $result = $this->endroit->insert_endroit($ville,$image,$description);
         if ($result) {
@@ -31,7 +34,12 @@ class webservice_endroit extends REST_Controller
             $res = json_encode($donnees);
             $this->output->set_output($res);
         }
-     }
+      }
+     /*Web service modification endroit
+      Method : PUT
+      Params : ville,image,description
+      URL : IP/Webservice_avis/update_endroit
+     */ 
     public function update_endroit_put($id)
      {
 
@@ -61,7 +69,11 @@ class webservice_endroit extends REST_Controller
             $this->output->set_output($res);
         }
     }
-    public function list_endroit_get()
+    /*Web service liste endroit
+      Method : GET
+      URL : IP/Webservice_avis/list_endroit
+     */ 
+ public function list_endroit_get()
     {
         $listdata = $this->endroit->get_endroit();
         if($listdata){
@@ -90,7 +102,11 @@ class webservice_endroit extends REST_Controller
             $this->output->set_output($res);
         }
     }
-    //
+    /*Web service liste endroit par identifiant
+      Method : GET
+      Params : id
+      URL : IP/Webservice_avis/endroit_byId
+     */ 
     public function endroit_byId_get($id)
     {
         $listdata = $this->endroit->get_endroitById($id);
@@ -120,19 +136,26 @@ class webservice_endroit extends REST_Controller
             $this->output->set_output($res);
         }
     }
-    public function endroitdel_delete($id)
-    {
-    
+    /*Web service supression endroit
+      Method : DELETE
+      Params : id
+      URL : IP/Webservice_avis/supp_endroit
+     */ 
+ public function supp_endroit_delete($id)
+     {
+
     $resultat = $this->endroit->delete_endroit($id);
-    var_dump($resultat);die();
-    if($resultat)
-      {
-      $endroit = array();
+
+    $endroit = array();
+
+    if($resultat){
+      $this->endroit->delete_endroit($id);
       $endroit['status'] = "OK";
       $endroit['message'] = "Endroit supprimer avec succès";
       $res = json_encode($endroit);
       $this->output->set_output($res);
-      }else{
+      }
+      else{
       $endroit['status'] = "KO";
       $endroit['message'] = "L'identifiant de l'endroit que vous avez introduit n'existe pas, veuillez réessaye";
       $res = json_encode($endroit);

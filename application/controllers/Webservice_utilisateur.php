@@ -19,7 +19,7 @@ class webservice_utilisateur extends REST_Controller
 
         $nom= $this->post('nom');
         $email = $this->post('email');
-        $password = $this->post('password');
+        $password = md5($this->post('password'));
         $genre = $this->post('genre');
         $date_anniv = $this->post('date_anniversaire');
 
@@ -91,8 +91,10 @@ class webservice_utilisateur extends REST_Controller
             $data_update['genre'] =  $genre;
             $data_update['date_anniversaire'] = $date_anniversaire;
         }
-          
-    if (!$this->user->update_pass($id,$data_update)){
+        var_dump($id,$data_update);die();
+       /* var_dump($id,$nom,$email,$password,$genre,$date_anniversaire);die();*/
+    if (!$this->user->update_user($id,$data_update)){
+
             $donnees = array();
             $donnees['status'] = "OK";
             $donnees['message'] = "Utilisateur a été modifier avec succès.";
@@ -203,6 +205,32 @@ class webservice_utilisateur extends REST_Controller
         $donnees['message'] =  "Aucun utilisateur trouvé";
         $res = json_encode($donnees);
         $this->output->set_output($res);
+      }
+    }
+ /*Web service supression utilisateur
+   Method : DELETE
+   Params : id
+   URL : IP/Webservice_utilisateur/supp_user
+ */ 
+ public function supp_user_delete($id)
+     {
+
+    $resultat = $this->utilisateur->delete_user($id);
+
+    $endroit = array();
+
+    if($resultat){
+
+      $endroit['status'] = "OK";
+      $endroit['message'] = "Endroit supprimer avec succès";
+      $res = json_encode($endroit);
+      $this->output->set_output($res);
+      }
+      else{
+      $endroit['status'] = "KO";
+      $endroit['message'] = "L'identifiant de l'endroit que vous avez introduit n'existe pas, veuillez réessaye";
+      $res = json_encode($endroit);
+      $this->output->set_output($res);
       }
     }
 //Convertion date d'anniversaire en français

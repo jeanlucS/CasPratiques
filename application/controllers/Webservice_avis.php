@@ -15,9 +15,9 @@ class webservice_avis extends REST_Controller
     /*Web service insertion avis
       Method : POST
       Params : utilisateur_id,endroit_id,note,commentaire
-      URL : IP/Webservice_avis/isertAvis
+      URL : IP/Webservice_avis/insertAvis
      */ 
-    public function isertAvis_post(){
+    public function insertAvis_post(){
 
         $utilisateur_id = $this->post('utilisateur_id');
         $endroit_id = $this->post('endroit_id');
@@ -142,6 +142,32 @@ class webservice_avis extends REST_Controller
             $res = json_encode($avis);
             $this->output->set_output($res);
         }
+    }
+   /*Web service supression avis
+      Method : DELETE
+      Params : id
+      URL : IP/Webservice_avis/supp_avis
+     */ 
+ public function supp_avis_delete($id)
+     {
+
+    $resultat = $this->avis->delete_avis($id);
+
+    $endroit = array();
+
+    if($resultat){
+
+      $endroit['status'] = "OK";
+      $endroit['message'] = "Avis supprimer avec succès";
+      $res = json_encode($endroit);
+      $this->output->set_output($res);
+      }
+      else{
+      $endroit['status'] = "KO";
+      $endroit['message'] = "L'identifiant de l'avis que vous avez introduit n'existe pas, veuillez réessaye";
+      $res = json_encode($endroit);
+      $this->output->set_output($res);
+      }
     }
 }
 ?>
