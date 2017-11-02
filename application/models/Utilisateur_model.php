@@ -3,16 +3,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Utilisateur_model extends CI_Model {
 
-    public function insert_user($nom,$email,$password, $genre,$date_anniv)
+    public function insert_user($nom,$email,$genre,$date)
     {
      $res = $this->isUserExist($email);
         if (!$res) {
          $data = array(
              'nom' => $nom,
              'email' => $email,
-             'password' => $password,
              'genre' => $genre,
-             'date_anniversaire' => $date_anniv);
+             'date_anniversaire' => $date);
              if ($this->db->insert('utilisateur', $data)) {
                  return USER_CREATED;
              }else{
