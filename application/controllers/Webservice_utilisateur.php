@@ -10,6 +10,10 @@ class webservice_utilisateur extends REST_Controller
         parent::__construct();
         $this->load->model('Utilisateur_model','user');
         $this->output->set_content_type('application/json');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST,DELETE,PUT,OPTIONS');
+        header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Request-With');
+        header('Access-Control-Allow-Credentials: true');
     }
     /*Web service inscription d'utilisateur
       Method : POST
@@ -19,27 +23,32 @@ class webservice_utilisateur extends REST_Controller
 
         $nom= $this->post('nom');
         $email = $this->post('email');
-        $password = md5($this->post('password'));
         $genre = $this->post('genre');
-        $date_anniv = $this->post('date_anniversaire');
+        $date = $this->post('date');
 
         $donnees = array();
-        $result = $this->user->insert_user($nom,$email,$password, $genre,$date_anniv);
+        $result = $this->user->insert_user($nom,$email,$genre,$date);
         if ($result == USER_CREATED)
         {
+            $this->output->set_content_type('application/json');
             $donnees['status'] = "OK";
             $donnees['message'] = "L’inscription s’est effectuée avec succès";
-            $donnees['user'] =  $this->user->get_userByEmail($email);
+            $donnees['User'] =  $this->user->get_userByEmail($email);
             $res = json_encode($donnees);
             $this->output->set_output($res);
+            
+            
         }
          elseif ($result == USER_CREATION_FAILED) {
             $donnees['status'] = "KO";
             $donnees['message'] = "L'information que vous avez saisi n’est pas correct. Veuillez le réessayer!";
+
             $res = json_encode($donnees);
             $this->output->set_output($res);
+
         
         } elseif ($result == USER_EXIST) {
+            $this->output->set_content_type('application/json');
             $donnees['status'] = "KO";
             $donnees['message'] = "L'email que vous avez saisi existe déjà.Veuillez le réessayer!";
             $res = json_encode($donnees);
@@ -90,11 +99,7 @@ class webservice_utilisateur extends REST_Controller
             $data_update['password'] = $password;
             $data_update['genre'] =  $genre;
             $data_update['date_anniversaire'] = $date_anniversaire;
-        }
-        var_dump($id,$data_update);die();
-       /* var_dump($id,$nom,$email,$password,$genre,$date_anniversaire);die();*/
-    if (!$this->user->update_user($id,$data_update)){
-
+            $this->user->update_user($id,$data_update);
             $donnees = array();
             $donnees['status'] = "OK";
             $donnees['message'] = "Utilisateur a été modifier avec succès.";
@@ -123,15 +128,15 @@ class webservice_utilisateur extends REST_Controller
 			$usr = array();
 			foreach ($listdata as $cur_userdata){
 				$userdata = array();
-				$userdata['id'] = $cur_userdata['utilisateur_id'];
+				$userdata['utilisateur_id'] = $cur_userdata['utilisateur_id'];
 				$userdata['nom'] = $cur_userdata['nom'];
-        $userdata['mail'] = $cur_userdata['email'];
+        $userdata['email'] = $cur_userdata['email'];
 				$userdata['genre'] = $cur_userdata['genre'];
-				$userdata['anniversaire'] = $this->date_en_to_fr($cur_userdata['date_anniversaire']);
+				$userdata['date_anniversaire'] = $this->date_en_to_fr($cur_userdata['date_anniversaire']);
 				$usr[$i] = $userdata;
 				$i++;
 			}
-			$donnees['users'] = $usr;
+			$donnees['User'] = $usr;
 			$res = json_encode($donnees);
     		$this->output->set_output($res);
 		}else{
@@ -189,14 +194,14 @@ class webservice_utilisateur extends REST_Controller
                 $userdata = array();
                 $userdata['id'] = $data['utilisateur_id'];
                 $userdata['nom'] = $data['nom'];
-                $userdata['mail'] = $data['email'];
+                $userdata['email'] = $data['email'];
                 $userdata['genre'] = $data['genre'];
-                $userdata['anniversaire'] = $data['date_anniversaire'];
+                $userdata['date'] = $data['date_anniversaire'];
 
                 $donnees[$i] = $userdata;
                 $i++;
             }
-            $users['users'] = $donnees;
+            $users['User'] = $donnees;
             $res = json_encode($users);
             $this->output->set_output($res);
         }else{
@@ -214,13 +219,10 @@ class webservice_utilisateur extends REST_Controller
  */ 
  public function supp_user_delete($id)
      {
-
-    $resultat = $this->utilisateur->delete_user($id);
-
     $endroit = array();
-
-    if($resultat){
-
+    
+    if((isset($id) && !empty($id))){
+      $this->utilisateur->delete_user($id);
       $endroit['status'] = "OK";
       $endroit['message'] = "Endroit supprimer avec succès";
       $res = json_encode($endroit);

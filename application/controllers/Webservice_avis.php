@@ -11,6 +11,7 @@ class webservice_avis extends REST_Controller
         $this->load->model('Avis_model','avis');
         $this->load->model('Utilisateur_model','utilisateur');
         $this->output->set_content_type('application/json');
+        header('Access-Control-Allow-Origin:*');
     }
     /*Web service insertion avis
       Method : POST
@@ -60,8 +61,7 @@ class webservice_avis extends REST_Controller
             $data_update['endroit_id'] = $endroit_id;
             $data_update['note'] = $note;
             $data_update['commentaire'] = $commentaire;
-        } 
-    if ($this->avis->update_Avis($id,$data_update)){
+            $this->avis->update_Avis($id,$data_update);
             $donnees = array();
             $donnees['status'] = "OK";
             $donnees['message'] = "Modification avis avec succès.";
@@ -89,7 +89,7 @@ class webservice_avis extends REST_Controller
 			foreach ($listdata as $cur_avisdata){
 				$data = array();
 				$data['id'] = $cur_avisdata['avis_id'];
-				$data['utilisateur_id'] = $cur_avisdata['utilisateur_id'];
+				$data['user_id'] = $cur_avisdata['utilisateur_id'];
 				$data['endroit_id'] = $cur_avisdata['endroit_id'];
 				$data['note'] = $cur_avisdata['note'];
 				$data['commentaire'] = $cur_avisdata['commentaire'];
@@ -97,8 +97,7 @@ class webservice_avis extends REST_Controller
 				$avs[$i] = $data;
 				$i++;
 			}
-            $donnees['status'] = "KO";
-			$donnees['avis'] = $avs;
+			$donnees['Avis'] = $avs;
 			$res = json_encode($donnees);
     		$this->output->set_output($res);
 		}else{
@@ -150,13 +149,10 @@ class webservice_avis extends REST_Controller
      */ 
  public function supp_avis_delete($id)
      {
-
-    $resultat = $this->avis->delete_avis($id);
-
     $endroit = array();
 
-    if($resultat){
-
+    if((isset($id) && !empty($id))){
+      $this->avis->delete_avis($id);
       $endroit['status'] = "OK";
       $endroit['message'] = "Avis supprimer avec succès";
       $res = json_encode($endroit);

@@ -10,6 +10,7 @@ class webservice_endroit extends REST_Controller
         parent::__construct();
         $this->load->model('Endroit_model','endroit');
         $this->output->set_content_type('application/json');
+        header('Access-Control-Allow-Origin:*');
     }
     /*Web service insertion endroit
       Method : POST
@@ -53,9 +54,7 @@ class webservice_endroit extends REST_Controller
             $data_update['endroit_id'] = $id;
             $data_update['ville'] =  $ville;
             $data_update['description'] = $description;
-        } 
-
-    if (!$this->endroit->update_endroit($id,$data_update)){
+            $this->endroit->update_endroit($id,$data_update);
             $donnees = array();
             $donnees['status'] = "OK";
             $donnees['message'] = "Modification avis avec succès.";
@@ -90,8 +89,8 @@ class webservice_endroit extends REST_Controller
                 $endroit[$i] = $data;
                 $i++;
             }
-            $donnees['status'] = "KO";
-            $donnees['endroit'] = $endroit;
+           // $donnees['status'] = "KO";
+            $donnees['Endroit'] = $endroit;
             $res = json_encode($donnees);
             $this->output->set_output($res);
         }else{
@@ -142,13 +141,11 @@ class webservice_endroit extends REST_Controller
       URL : IP/Webservice_avis/supp_endroit
      */ 
  public function supp_endroit_delete($id)
-     {
-
-    $resultat = $this->endroit->delete_endroit($id);
+    {
 
     $endroit = array();
 
-    if($resultat){
+    if((isset($id) && !empty($id))){
       $this->endroit->delete_endroit($id);
       $endroit['status'] = "OK";
       $endroit['message'] = "Endroit supprimer avec succès";
